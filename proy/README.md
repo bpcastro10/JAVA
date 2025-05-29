@@ -486,3 +486,71 @@ El microservicio de cuentas realiza validaciones a nivel de aplicación para:
 
 Ambos microservicios estarán corriendo en `http://localhost:8080` y `http://localhost:8081` respectivamente.
 
+## Ejecución con Docker Compose
+
+### 1. Requisitos
+- Tener Docker y Docker Compose instalados en tu máquina.
+- Tener una instancia de PostgreSQL corriendo en tu máquina host (por ejemplo, un contenedor llamado `basedb`), con las bases de datos `microclientesdb` y `microcuentasdb` ya creadas y accesibles.
+- El usuario y contraseña configurados en los microservicios deben coincidir con los de tu base de datos PostgreSQL (por defecto: usuario `postgres`, contraseña `admin123`).
+
+### 2. Configuración de las URLs de conexión
+En el archivo `docker-compose.yml`, asegúrate de que las variables de entorno de los microservicios apunten a tu base de datos. Por ejemplo:
+
+```yaml
+SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/microclientesdb
+SPRING_DATASOURCE_USERNAME: postgres
+SPRING_DATASOURCE_PASSWORD: admin123
+```
+
+> **Nota:**
+> - `host.docker.internal` permite que los contenedores accedan a la base de datos de tu máquina host en Windows y Mac. 
+> - Si usas Linux, reemplaza `host.docker.internal` por la IP de tu host o configura el acceso de red correspondiente.
+
+### 3. Levantar los microservicios
+Desde la raíz del proyecto (donde está el archivo `docker-compose.yml`), ejecuta:
+
+```bash
+docker-compose up -d --build
+```
+
+Esto levantará los microservicios `microclientes` y `microcuentas`.
+
+### 4. Verificar el estado
+Puedes verificar que los servicios estén corriendo con:
+
+```bash
+docker-compose ps
+```
+
+Y ver los logs con:
+
+```bash
+docker-compose logs microclientes
+# o
+docker-compose logs microcuentas
+```
+
+### 5. Acceso a los servicios
+- Microservicio de clientes: http://localhost:8080
+- Microservicio de cuentas: http://localhost:8081
+
+### 6. ¿Qué hacer si corres Docker Compose en otro entorno?
+
+- **Base de datos en otro host:**
+  - Cambia `host.docker.internal` en las variables de entorno por la IP o el hostname donde está tu base de datos PostgreSQL.
+  - Ejemplo:
+    ```yaml
+    SPRING_DATASOURCE_URL: jdbc:postgresql://192.168.1.100:5432/microclientesdb
+    ```
+- **Usuario/contraseña diferentes:**
+  - Cambia las variables `SPRING_DATASOURCE_USERNAME` y `SPRING_DATASOURCE_PASSWORD` en el `docker-compose.yml` para que coincidan con tu configuración real.
+- **Base de datos con otro nombre:**
+  - Cambia el nombre de la base de datos en la URL de conexión.
+
+### 7. Parar los servicios
+Para detener los servicios, ejecuta:
+
+```bash
+docker-compose down
+```
+
