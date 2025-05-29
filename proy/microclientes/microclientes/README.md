@@ -82,11 +82,16 @@ Unable to find com.proyecto.microclientes.entity.Persona with id 87654321
 
 ## Instrucciones de despliegue y ejecución
 
-1. **Configura la base de datos:**
+1. **Requisitos previos:**
+   - Java 17 o superior
+   - Maven
+   - PostgreSQL
+
+2. **Configura la base de datos:**
    - Crea una base de datos en PostgreSQL, por ejemplo: `microclientesdb`.
    - Modifica el archivo `src/main/resources/application.properties` con tus credenciales y URL de la base de datos.
 
-2. **Crea las tablas ejecutando este SQL:**
+3. **Crea las tablas ejecutando este SQL:**
 ```sql
 CREATE TABLE persona (
     identificacion VARCHAR(20) PRIMARY KEY,

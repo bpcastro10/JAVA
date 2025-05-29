@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  microclientes:
+    build:
+      context: ./microclientes/microclientes
+      dockerfile: Dockerfile
+    container_name: microclientes
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/microclientesdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin123
+    networks:
+      - microservices-network
+
+  microcuentas:
+    build:
+      context: ./microcuentas/microcuentas
+      dockerfile: Dockerfile
+    container_name: microcuentas
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/microcuentasdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin123
+      MICROCLIENTES_URL: http://microclientes:8080
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
+
+volumes:
+  postgres_data: 

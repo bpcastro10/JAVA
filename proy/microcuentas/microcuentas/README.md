@@ -3,11 +3,16 @@
 Este microservicio maneja la gestión de cuentas bancarias, movimientos y reportes financieros.
 
 ## Requisitos Previos
+
+- Java 17 o superior
+- Maven 3.6 o superior
+- PostgreSQL 12 o superior
 - Microservicio de Clientes corriendo en el puerto 8082
 
 ## Configuración del Entorno
 
-1. Configurar la base de datos PostgreSQL:
+1. Clonar el repositorio
+2. Configurar la base de datos PostgreSQL:
    ```sql
    -- Crear la base de datos
    CREATE DATABASE microcuentas;
@@ -62,7 +67,7 @@ Este microservicio maneja la gestión de cuentas bancarias, movimientos y report
    ON CONFLICT (numero_cuenta) DO NOTHING;
    ```
 
-2. Configurar las credenciales en `application.properties`:
+3. Configurar las credenciales en `application.properties`:
    ```properties
    spring.datasource.username=postgres
    spring.datasource.password=admin123
@@ -434,3 +439,49 @@ El microservicio se integra con el microservicio de clientes mediante Feign Clie
   - `GET http://localhost:8082/clientes/{id}`: Obtiene información de un cliente por ID
   - `GET http://localhost:8082/clientes/cuenta/{numeroCuenta}`: Obtiene información de un cliente por número de cuenta
 
+## Manejo de Errores
+
+El microservicio implementa un manejo global de excepciones:
+
+- `SaldoInsuficienteException`: Para operaciones que exceden el saldo disponible
+- `IllegalArgumentException`: Para validaciones de datos
+- `GlobalExceptionHandler`: Maneja todas las excepciones y retorna respuestas HTTP apropiadas
+
+## Configuración de Caché
+
+Se implementa caché con Caffeine para mejorar el rendimiento:
+- Tamaño máximo: 500 elementos
+- Tiempo de expiración: 600 segundos
+
+## Compilación y Ejecución
+
+1. Compilar el proyecto:
+   ```bash
+   mvn clean install
+   ```
+
+2. Ejecutar el microservicio:
+   ```bash
+   mvn spring-boot:run
+   ```
+
+El microservicio estará disponible en `http://localhost:8081/api`
+
+## Notas Importantes
+
+- Todas las operaciones de movimiento validan el saldo disponible
+- Los reportes incluyen información del cliente obtenida del microservicio de clientes
+- Se implementa validación de fechas en los reportes
+- El microservicio maneja automáticamente las transacciones y el rollback en caso de error
+
+## Contribución
+
+1. Fork el repositorio
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## Licencia
+
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles. 
